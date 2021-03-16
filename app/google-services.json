@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "140916446439",
+    "project_id": "random-chat-7a362",
+    "storage_bucket": "random-chat-7a362.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:140916446439:android:e2543579a4c9b9ae74fe42",
+        "android_client_info": {
+          "package_name": "com.app.randomchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "140916446439-072bviskfrumokqlg618o25t34oe66g5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYQD10nOSdIGCIMV0sVGS41LvBpbOe-Xg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "140916446439-072bviskfrumokqlg618o25t34oe66g5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
