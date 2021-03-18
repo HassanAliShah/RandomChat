@@ -1,7 +1,6 @@
 package com.app.randomchat.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.app.randomchat.Info.Info;
-import com.app.randomchat.Pojo.FriendlyMessage;
+import com.app.randomchat.Pojo.Message;
 import com.app.randomchat.Pojo.Super;
 import com.app.randomchat.Pojo.User;
 import com.app.randomchat.R;
@@ -54,13 +53,13 @@ public class TypeRecyclerViewAdapter extends RecyclerView.Adapter<TypeRecyclerVi
         }
 
         if (type == TYPE_MESSAGE) {
-            FriendlyMessage friendlyMessage = (FriendlyMessage) listInstances.get(position);
-            Log.i(TAG, "onBindViewHolder: " + friendlyMessage.getFromUserName());
-            holder.tvUserName.setText(friendlyMessage.getFromUserName());
+            Message message = (Message) listInstances.get(position);
+            Log.i(TAG, "onBindViewHolder: " + message.getFromUserName());
+            holder.tvUserName.setText(message.getFromUserName());
             holder.tvUserName.setVisibility(View.VISIBLE);
             holder.tvUserName.setTextColor(context.getColor(R.color.black));
-            holder.ivUserProfile.setImageURI(friendlyMessage.getFromUserProfilePic());
-            holder.tvLastText.setText(friendlyMessage.getText());
+            holder.ivUserProfile.setImageURI(message.getFromUserProfilePic());
+            holder.tvLastText.setText(message.getText());
 
             return;
         }

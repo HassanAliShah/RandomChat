@@ -1,5 +1,6 @@
 package com.app.randomchat.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,10 +25,15 @@ public class LoginActivity extends AppCompatActivity {
     String strEtEmail = "";
     String strEtPassword = "";
 
+    Activity loginActivity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        loginActivity = this;
+
         startActivity(new Intent(this, SplashActivity.class));
 
         etEmail = findViewById(R.id.et_email);
@@ -76,5 +82,9 @@ public class LoginActivity extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    public void createAccount(View view) {
+        startActivity(new Intent(this, SignUpActivity.class));
     }
 }

@@ -9,4 +9,5 @@
     <string name="last_name">Last name</string>
     <string name="sign_up">Sign Up</string>
     <string name="username">Username</string>
+    <string name="my_chats">My Chats</string>
 </resources>

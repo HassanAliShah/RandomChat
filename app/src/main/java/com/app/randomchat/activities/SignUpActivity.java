@@ -1,15 +1,18 @@
 package com.app.randomchat.activities;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.app.randomchat.Info.Info;
 import com.app.randomchat.Pojo.User;
 import com.app.randomchat.R;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
@@ -43,15 +46,11 @@ public class SignUpActivity extends AppCompatActivity implements Info {
         etLastName = findViewById(R.id.et_last_name);
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
-
         progressBar = findViewById(R.id.pb_sign_up);
-
     }
 
     public void signUp(View view) {
-
         progressBar.setVisibility(View.VISIBLE);
-
         strEtFirstName = Objects.requireNonNull(etFirstName.getText()).toString();
         strEtLastName = Objects.requireNonNull(etLastName.getText()).toString();
         strEtEmail = Objects.requireNonNull(etEmail.getText()).toString();
@@ -64,8 +63,12 @@ public class SignUpActivity extends AppCompatActivity implements Info {
     }
 
     private void initSignUp() {
+        Log.i(TAG, "initSignUp: ");
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.createUserWithEmailAndPassword(strEtEmail, strEtPassword).addOnCompleteListener(task -> {
+
+            Log.i(TAG, "initSignUp: " + task.getException());
+
             if (task.isSuccessful()) {
                 writeDataToFirebase();
             }
@@ -73,17 +76,26 @@ public class SignUpActivity extends AppCompatActivity implements Info {
     }
 
     private void writeDataToFirebase() {
-        String id = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        User user = new User(id, strEtFirstName, strEtLastName, strEtEmail, strEtPassword);
+        Log.i(TAG, "writeDataToFirebase: ");
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference(USERS).child(id);
-        myRef.setValue(user).addOnCompleteListener(task -> {
-            progressBar.setVisibility(View.GONE);
-            if (task.isSuccessful())
-                finish();
-            else
-                Toast.makeText(SignUpActivity.this, "Unsuccessful", Toast.LENGTH_SHORT).show();
-        });
+        DatabaseReference myRef = database.getReference("message");
+
+        myRef.setValue("Hello, World!");
+//
+//        String id = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+//        User user = new User(id, strEtFirstName, strEtLastName, strEtEmail, strEtPassword);
+//        FirebaseDatabase database = FirebaseDatabase.getInstance();
+//        DatabaseReference myRef = database.getReference(USERS).child(id);
+//        myRef.setValue(user).addOnCompleteListener(task -> {
+//            progressBar.setVisibility(View.GONE);
+//
+//            Log.i(TAG, "writeDataToFirebase: " + task.getException());
+//
+//            if (task.isSuccessful())
+//                finish();
+//            else
+//                Toast.makeText(SignUpActivity.this, "Unsuccessful", Toast.LENGTH_SHORT).show();
+//        });
 
     }
 

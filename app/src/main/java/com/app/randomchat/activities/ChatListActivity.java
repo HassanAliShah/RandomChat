@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.randomchat.Info.Info;
-import com.app.randomchat.Pojo.FriendlyMessage;
+import com.app.randomchat.Pojo.Message;
 import com.app.randomchat.Pojo.Super;
 import com.app.randomchat.R;
 import com.app.randomchat.adapters.TypeRecyclerViewAdapter;
@@ -29,7 +29,7 @@ public class ChatListActivity extends AppCompatActivity implements Info {
     List<Super> messageList;
     String currentUserId;
     List<String> usersFromList;
-    List<FriendlyMessage> friendlyMessageList;
+//    List<Message> messageList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +43,7 @@ public class ChatListActivity extends AppCompatActivity implements Info {
 
     private void initChatList() {
         rvChatList = findViewById(R.id.rv_chats);
-        friendlyMessageList = new ArrayList<>();
+        messageList = new ArrayList<>();
         messageList = new ArrayList<>();
         usersFromList = new ArrayList<>();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -52,7 +52,7 @@ public class ChatListActivity extends AppCompatActivity implements Info {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 messageList.clear();
-                friendlyMessageList.clear();
+                messageList.clear();
                 for (DataSnapshot sss : dataSnapshot.getChildren()) {
                     boolean firstIteration = true;
                     for (DataSnapshot snapshot : sss.getChildren()) {
@@ -60,7 +60,7 @@ public class ChatListActivity extends AppCompatActivity implements Info {
                             firstIteration = false;
                             continue;
                         }
-                        FriendlyMessage message = snapshot.getValue(FriendlyMessage.class);
+                        Message message = snapshot.getValue(Message.class);
                         String currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
                         if (message.getFromUser().equals(currentUserId)) {
@@ -70,18 +70,14 @@ public class ChatListActivity extends AppCompatActivity implements Info {
 
                         if (currentUserId.equals(message.getToUser()) | currentUserId.equals(message.getFromUser())) {
                             usersFromList.add(message.getFromUser());
-                            friendlyMessageList.add(message);
+                            messageList.add(message);
                         }
                         break;
                     }
                 }
 
-                for (FriendlyMessage friendlyMessage : friendlyMessageList) {
-                    Log.i(TAG, "onDataChange: LIST DISPLAY to : " + friendlyMessage.getToUser());
-                    Log.i(TAG, "onDataChange: LIST DISPLAY con : " + friendlyMessage.getConversationId());
-                }
 
-                messageList.addAll(friendlyMessageList);
+                messageList.addAll(messageList);
                 TypeRecyclerViewAdapter typeRecyclerViewAdapter = new
                         TypeRecyclerViewAdapter(ChatListActivity.this, messageList, TYPE_MESSAGE);
                 typeRecyclerViewAdapter.notifyDataSetChanged();

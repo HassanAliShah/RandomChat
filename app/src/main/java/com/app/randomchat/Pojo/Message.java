@@ -1,7 +1,7 @@
 package com.app.randomchat.Pojo;
 
 
-public class FriendlyMessage extends Super {
+public class Message extends Super {
 
     boolean showOnRight = false;
     private String messageId;
@@ -13,12 +13,12 @@ public class FriendlyMessage extends Super {
     private String conversationId;
     private String fromUserProfilePic;
 
-    public FriendlyMessage() {
+    public Message() {
     }
 
-    public FriendlyMessage(String messageId, String text, String fromUser, String fromUserName,
-                           String photoUrl, String toUser,
-                           String fromUserProfilePic, String conversationId) {
+    public Message(String messageId, String text, String fromUser, String fromUserName,
+                   String photoUrl, String toUser,
+                   String fromUserProfilePic, String conversationId) {
         this.messageId = messageId;
         this.text = text;
         this.fromUser = fromUser;
