@@ -203,8 +203,8 @@ public class ChatActivity extends AppCompatActivity implements Info {
 
         String messageId = String.valueOf(System.currentTimeMillis());
 
-        Message friendlyMessage = new Message(messageId, "Hellowww", toUserId,
-                "asdasd", "", fromUserId, "", conId);
+        Message friendlyMessage = new Message(messageId, "", toUserId,
+                "", "", fromUserId, "", conId);
         DatabaseReference myRef = database.getReference(CONVERSATIONS).child(conId)
                 .child(messageId);
         myRef.setValue(friendlyMessage);
