@@ -7,6 +7,16 @@
     android:background="@android:color/holo_blue_dark"
     tools:context=".activities.LoginActivity">
 
+    <ProgressBar
+        android:id="@+id/pb_log_in"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@id/btn_login"
+        app:layout_constraintStart_toStartOf="@id/btn_login"
+        app:layout_constraintTop_toBottomOf="@+id/btn_login" />
+
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_email"
         android:layout_width="0dp"
@@ -45,9 +55,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@android:color/holo_orange_dark"
+        android:onClick="login"
         android:text="@string/login"
         android:textAllCaps="false"
-        android:onClick="login"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="@id/et_email"
         app:layout_constraintStart_toStartOf="@id/et_email"
@@ -57,10 +67,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
+        android:onClick="createAccount"
         android:text="@string/create_account"
         android:textColor="@android:color/white"
         android:textSize="20sp"
-        android:onClick="createAccount"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

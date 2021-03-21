@@ -4,26 +4,27 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.app.randomchat.Info.Info;
 import com.app.randomchat.R;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Objects;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements Info {
 
     TextInputEditText etEmail;
     TextInputEditText etPassword;
+
     String strEtEmail = "";
     String strEtPassword = "";
+
+    ProgressBar progressBar;
 
     Activity loginActivity;
 
@@ -31,13 +32,18 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+//        FirebaseAuth.getInstance().signOut();
+
+        progressBar = findViewById(R.id.pb_log_in);
+        etEmail = findViewById(R.id.et_email);
+        etPassword = findViewById(R.id.et_password);
 
         loginActivity = this;
 
-        startActivity(new Intent(this, SplashActivity.class));
-
-        etEmail = findViewById(R.id.et_email);
-        etPassword = findViewById(R.id.et_password);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            startActivity(new Intent(this, ChatListActivity.class));
+            finish();
+        }
 
     }
 
@@ -48,21 +54,30 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Invalid arguments", Toast.LENGTH_SHORT).show();
             return;
         }
+        progressBar.setVisibility(View.VISIBLE);
         signIn();
+    }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        if (firebaseAuth.getCurrentUser() != null) {
+            startActivity(new Intent(this, ChatListActivity.class));
+            finish();
+        }
     }
 
     private void signIn() {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.signInWithEmailAndPassword(strEtEmail, strEtPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(LoginActivity.this, "Logged In", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(LoginActivity.this, "Unsuccessful", Toast.LENGTH_SHORT).show();
-                }
+        firebaseAuth.signInWithEmailAndPassword(strEtEmail, strEtPassword).addOnCompleteListener(task -> {
+            progressBar.setVisibility(View.GONE);
+            if (task.isSuccessful()) {
+                Toast.makeText(LoginActivity.this, "Logged In", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, ChatListActivity.class));
+                finish();
+            } else {
+                Toast.makeText(LoginActivity.this, "Unsuccessful", Toast.LENGTH_SHORT).show();
             }
         });
     }

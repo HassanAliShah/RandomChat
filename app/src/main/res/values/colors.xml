@@ -6,6 +6,10 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
+    <color name="cyan">#E4FF69</color>
     <color name="white">#FFFFFFFF</color>
     <color name="greenishBlue">#36F492</color>
+    <color name="main_color_theme">#ff0099cc</color>
+    <color name="quantum_grey400">#4D4D4D</color>
+    <color name="quantum_grey700">#797979</color>
 </resources>

@@ -1,19 +1,54 @@
 package com.app.randomchat.Pojo;
 
-public class User extends Super{
+public class User extends Super {
 
     String id;
     String firstName;
     String lastName;
     String email;
     String password;
+    String userImageUrl;
+    String gender;
+    String priority;
 
-    public User(String id, String firstName, String lastName, String email, String password) {
+    public User() {
+
+    }
+
+    public User(String id, String firstName, String lastName, String email, String password,
+                String userImageUrl, String gender, String priority) {
         this.id = id;
+        this.priority = priority;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.gender = gender;
+        this.userImageUrl = userImageUrl;
         this.password = password;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getUserImageUrl() {
+        return userImageUrl;
+    }
+
+    public void setUserImageUrl(String userImageUrl) {
+        this.userImageUrl = userImageUrl;
     }
 
     public String getPassword() {
