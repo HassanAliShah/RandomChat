@@ -32,7 +32,6 @@ public class LoginActivity extends AppCompatActivity implements Info {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-//        FirebaseAuth.getInstance().signOut();
 
         progressBar = findViewById(R.id.pb_log_in);
         etEmail = findViewById(R.id.et_email);

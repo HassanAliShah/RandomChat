@@ -1,17 +1,29 @@
 package com.app.randomchat.activities;
 
+import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,27 +35,36 @@ import com.app.randomchat.Pojo.Super;
 import com.app.randomchat.Pojo.User;
 import com.app.randomchat.Pojo.UserConHistory;
 import com.app.randomchat.R;
+import com.app.randomchat.Utils.ImagePicker;
 import com.app.randomchat.adapters.TypeRecyclerViewAdapter;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class ChatListActivity extends AppCompatActivity implements Info {
 
     public static User toUser;
     RecyclerView rvChatList;
-    List<Super> messageList;
+    List<Super> historyList;
     List<String> usersFromList;
     String currentUserId;
     User currentUser;
@@ -54,11 +75,15 @@ public class ChatListActivity extends AppCompatActivity implements Info {
     NavigationView navigationView;
     DrawerLayout drawerLayout;
     ImageButton ibChats;
-    boolean isFirst = true;
     SimpleDraweeView ivUserProfile;
     List<String> priorityList;
     List<String> genderList;
     Intent intent;
+    TextInputEditText etUserName;
+    ProgressBar pbLoading;
+    View hView;
+    ProgressDialog dialog;
+    Bitmap bmpUserImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,9 +94,11 @@ public class ChatListActivity extends AppCompatActivity implements Info {
         myRef = database.getReference();
 
         ibChats = findViewById(R.id.ib_chats);
+        pbLoading = findViewById(R.id.pb_load);
+        pbLoading.setVisibility(View.VISIBLE);
         initDrawerConfig();
 
-        currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        currentUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
         initChatList();
 
@@ -86,14 +113,16 @@ public class ChatListActivity extends AppCompatActivity implements Info {
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         ibChats.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
 
-        View hView = navigationView.getHeaderView(0);
-
-        TextView tvBack = hView.findViewById(R.id.tv_back);
+        hView = navigationView.getHeaderView(0);
+        etUserName = hView.findViewById(R.id.et_username);
+        ImageButton tvBack = hView.findViewById(R.id.tv_back);
         tvBack.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
 
         ivUserProfile = hView.findViewById(R.id.iv_user_profile);
         spPriority = hView.findViewById(R.id.spinner);
         spGender = hView.findViewById(R.id.sp_gender);
+
+        ivUserProfile.setOnClickListener(v -> openGalleryWindow());
 
         priorityList = new ArrayList<>();
         priorityList.add(BOTH);
@@ -158,6 +187,95 @@ public class ChatListActivity extends AppCompatActivity implements Info {
 
     }
 
+    private void openGalleryWindow() {
+        initGalleryAccess();
+    }
+
+    public void initGalleryAccess() {
+        if (isStoragePermissionGranted()) {
+            openGallery();
+        }
+    }
+
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                final Uri imageUri = data.getData();
+                if (imageUri != null) {
+                    ivUserProfile.setImageURI(imageUri);
+                    bmpUserImage = ImagePicker.getImageFromResult(this, resultCode, data);
+                    uploadImage();
+                }
+            }
+            Log.i(TAG, "onActivityResult: " + data);
+
+        }
+    }
+
+    private void uploadImage() {
+        uploadImage(bmpUserImage);
+    }
+
+    private void uploadImage(Bitmap bitmap) {
+
+        Log.i(TAG, "uploadImage: ");
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] data = stream.toByteArray();
+        bitmap.recycle();
+        this.bmpUserImage.recycle();
+
+        final StorageReference ref;
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        assert user != null;
+        ref = FirebaseStorage.getInstance().getReference("Images").child(user.getUid());
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setTitle("Uploading....");
+        pd.show();
+        UploadTask uploadTask = ref.putBytes(data);
+        uploadTask.addOnSuccessListener(taskSnapshot -> {
+            new Handler().postDelayed(pd::dismiss, 500);
+            Task<Uri> result = Objects.requireNonNull(Objects.requireNonNull(taskSnapshot.getMetadata()).getReference()).getDownloadUrl();
+            result.addOnSuccessListener(uri -> {
+                String urlToImage = uri.toString();
+                currentUser.setUserImageUrl(urlToImage);
+                FirebaseDatabase.getInstance().getReference(USERS).child(currentUserId).setValue(currentUser);
+
+            });
+            Toast.makeText(getApplicationContext(), "Uploaded", Toast.LENGTH_SHORT).show();
+        }).addOnFailureListener(e -> {
+            pd.dismiss();
+            Toast.makeText(getApplication(), "Uploading failed" + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }).addOnProgressListener(snapshot -> {
+            double progress = (100.0 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
+            pd.setMessage("Uploaded - " + (int) progress + "%");
+        });
+
+    }
+
+
+    public boolean isStoragePermissionGranted() {
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                == PackageManager.PERMISSION_GRANTED) {
+            Log.v(TAG, "Permission is granted");
+            return true;
+        } else {
+            Log.v(TAG, "Permission is revoked");
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+            return false;
+        }
+    }
+
+
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START))
@@ -170,6 +288,23 @@ public class ChatListActivity extends AppCompatActivity implements Info {
         ivUserProfile.setImageURI(currentUser.getUserImageUrl());
         spPriority.setSelection(priorityList.indexOf(currentUser.getPriority()));
         spGender.setSelection(genderList.indexOf(currentUser.getGender()));
+        String username = currentUser.getFirstName() + " " + currentUser.getLastName();
+        etUserName.setText(username);
+
+        etUserName.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                currentUser.setFirstName(Objects.requireNonNull(etUserName.getText()).toString());
+                currentUser.setLastName("");
+                FirebaseDatabase.getInstance().getReference(USERS)
+                        .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                        .setValue(currentUser);
+                etUserName.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(hView.getWindowToken(), 0);
+                return true;
+            }
+            return false;
+        });
     }
 
     private void initCurrentUser() {
@@ -180,7 +315,7 @@ public class ChatListActivity extends AppCompatActivity implements Info {
                 Log.i(TAG, "onDataChange: " + currentUser);
                 initOnlineStatus();
                 initUserImage();
-
+                pbLoading.setVisibility(View.GONE);
             }
 
             @Override
@@ -192,7 +327,7 @@ public class ChatListActivity extends AppCompatActivity implements Info {
 
     private void initOnlineStatus() {
         Log.i(TAG, "initOnlineStatus: ");
-        OnlineUser onlineUser = new OnlineUser(currentUserId, currentUser.getGender());
+        OnlineUser onlineUser = new OnlineUser(currentUserId, "");
         myRef.child(ONLINE_USERS).child(currentUser.getGender()).child(currentUserId).setValue(onlineUser);
     }
 
@@ -205,24 +340,24 @@ public class ChatListActivity extends AppCompatActivity implements Info {
 
     private void initChatList() {
         rvChatList = findViewById(R.id.rv_chats);
-        messageList = new ArrayList<>();
+        historyList = new ArrayList<>();
         usersFromList = new ArrayList<>();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference(USER_CON_HISTORY).child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        DatabaseReference myRef = database.getReference(USER_CON_HISTORY).child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid());
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                messageList.clear();
+                historyList.clear();
                 List<UserConHistory> userConHistories = new ArrayList<>();
                 for (DataSnapshot sss : dataSnapshot.getChildren()) {
                     UserConHistory conHistory = sss.getValue(UserConHistory.class);
                     userConHistories.add(conHistory);
                 }
 
-                messageList.addAll(userConHistories);
+                historyList.addAll(userConHistories);
 
                 TypeRecyclerViewAdapter typeRecyclerViewAdapter = new
-                        TypeRecyclerViewAdapter(ChatListActivity.this, messageList, TYPE_MESSAGE);
+                        TypeRecyclerViewAdapter(ChatListActivity.this, historyList, TYPE_MESSAGE);
                 typeRecyclerViewAdapter.notifyDataSetChanged();
                 LinearLayoutManager linearLayoutManager = new LinearLayoutManager(ChatListActivity.this);
                 rvChatList.setLayoutManager(linearLayoutManager);
@@ -239,6 +374,9 @@ public class ChatListActivity extends AppCompatActivity implements Info {
 
     public void initMatching(View view) {
         String priority;
+        dialog = ProgressDialog.show(this, "",
+                "Loading. Please wait...", true);
+        dialog.show();
 
         if (currentUser == null)
             return;
@@ -254,8 +392,22 @@ public class ChatListActivity extends AppCompatActivity implements Info {
             public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                 List<OnlineUser> userList = new ArrayList<>();
 
-                for (DataSnapshot childSnapshot : dataSnapshot.getChildren())
+                List<String> userStrings = new ArrayList<>();
+                for (Super userConHistory : historyList) {
+                    UserConHistory userConHistory1 = (UserConHistory) userConHistory;
+                    userStrings.add(userConHistory1.getTargetUserId());
+                }
+
+
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    OnlineUser onlineUser = childSnapshot.getValue(OnlineUser.class);
+                    assert onlineUser != null;
+                    if (userStrings.contains(onlineUser.getUserId()))
+                        continue;
                     userList.add(childSnapshot.getValue(OnlineUser.class));
+                }
+
+                Log.i(TAG, "onDataChange: Male Users : " + userList);
 
                 if (currentUser.getPriority().equals(BOTH))
                     initFemaleUsers(userList);
@@ -277,16 +429,21 @@ public class ChatListActivity extends AppCompatActivity implements Info {
     private void initRandomSelection(List<OnlineUser> userList) {
         Collections.shuffle(userList);
         for (OnlineUser user : userList) {
-            if (FirebaseAuth.getInstance().getCurrentUser().getUid().equals(user.getUserId()))
+            if (Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid().equals(user.getUserId()))
                 continue;
 
             initTargetUser(user.getUserId());
-
+            dialog.dismiss();
             intent = new Intent(ChatListActivity.this, ChatActivity.class);
             intent.putExtra(KEY_TARGET_USER_ID, user.getUserId());
             startActivity(intent);
-            break;
+            return;
         }
+
+        Toast.makeText(this, "No user currently online", Toast.LENGTH_SHORT).show();
+        dialog.dismiss();
+
+
     }
 
     private void initTargetUser(String targetUserId) {
@@ -310,9 +467,28 @@ public class ChatListActivity extends AppCompatActivity implements Info {
         myRef.child(ONLINE_USERS).child(FEMALE).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
+                List<String> userStrings = new ArrayList<>();
+                for (Super userConHistory : historyList) {
+                    UserConHistory userConHistory1 = (UserConHistory) userConHistory;
+                    userStrings.add(userConHistory1.getTargetUserId());
+                }
+
+
                 List<OnlineUser> femaleUserList = new ArrayList<>();
-                for (DataSnapshot childSnapshot : dataSnapshot.getChildren())
+                for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
+                    OnlineUser onlineUser = childSnapshot.getValue(OnlineUser.class);
+
+                    assert onlineUser != null;
+                    if (userStrings.contains(onlineUser.getUserId()))
+                        continue;
+
+                    userList.add(childSnapshot.getValue(OnlineUser.class));
                     femaleUserList.add(childSnapshot.getValue(OnlineUser.class));
+                }
+
+                Log.i(TAG, "onDataChange: Female Users : " + userList);
+
+
                 userList.addAll(femaleUserList);
                 initRandomSelection(userList);
             }

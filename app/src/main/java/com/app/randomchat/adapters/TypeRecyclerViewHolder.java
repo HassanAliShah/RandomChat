@@ -7,10 +7,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.app.randomchat.R;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.material.card.MaterialCardView;
 
 public class TypeRecyclerViewHolder extends RecyclerView.ViewHolder {
 
@@ -22,6 +24,8 @@ public class TypeRecyclerViewHolder extends RecyclerView.ViewHolder {
     ImageView photoImageView;
     TextView messageTextView;
     TextView authorTextView;
+
+    CardView cardView;
 
     LinearLayout layout;
 
@@ -36,6 +40,7 @@ public class TypeRecyclerViewHolder extends RecyclerView.ViewHolder {
         messageTextView = itemView.findViewById(R.id.messageTextView);
         authorTextView = itemView.findViewById(R.id.nameTextView);
         layout = itemView.findViewById(R.id.layout);
+        cardView = itemView.findViewById(R.id.card);
     }
 
 }

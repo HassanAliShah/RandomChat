@@ -89,15 +89,22 @@ public class TypeRecyclerViewAdapter extends RecyclerView.Adapter<TypeRecyclerVi
 
         if (type == TYPE_REC_MESSAGE) {
             Message message = (Message) listInstances.get(position);
-            if (message.getText().equals("")) {
-                holder.layout.setVisibility(View.GONE);
+
+            try {
+                String string = message.getPhotoUrl();
+                Log.i(TAG, "onBindViewHolder: " + string);
+            } catch (Exception e) {
+                holder.layout.setVisibility(View.INVISIBLE);
+                holder.cardView.setVisibility(View.INVISIBLE);
+                e.printStackTrace();
+                Log.i(TAG, "onBindViewHolder: " + e);
                 return;
             }
 
             boolean isPhoto = message.getPhotoUrl() != null;
             if (isPhoto) {
                 holder.messageTextView.setVisibility(View.GONE);
-                holder.photoImageView.setVisibility(View.VISIBLE);
+                holder.cardView.setCardBackgroundColor(context.getColor(R.color.fui_transparent));
                 Glide.with(holder.photoImageView.getContext())
                         .load(message.getPhotoUrl())
                         .into(holder.photoImageView);

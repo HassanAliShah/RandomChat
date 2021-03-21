@@ -8,7 +8,6 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last name</string>
     <string name="sign_up">Sign Up</string>
-    <string name="username">Username</string>
     <string name="my_chats">My Chats</string>
     <string name="title_activity_chat_list_drawar">ChatListDrawarActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -32,4 +31,6 @@
     <string name="_back"><![CDATA[<]]></string>
     <string name="image_message">Image message</string>
     <string name="enter_message">Enter Message</string>
+    <string name="username">Username</string>
+    <string name="nickname">Nickname</string>
 </resources>

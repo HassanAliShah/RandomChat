@@ -59,7 +59,6 @@ import java.util.UUID;
 
 public class ChatActivity extends AppCompatActivity implements Info {
 
-
     User toUser;
     User fromUser;
     List<Super> friendlyMessages;
@@ -159,7 +158,7 @@ public class ChatActivity extends AppCompatActivity implements Info {
         userList.clear();
         userList.add(fromUserId);
         userList.add(toUserId);
-        checkConversations();
+//        checkConversations();
     }
 
     private void checkConversations() {
@@ -172,6 +171,7 @@ public class ChatActivity extends AppCompatActivity implements Info {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     for (DataSnapshot ss : snapshot.getChildren()) {
                         Message friendlyMessage = ss.getValue(Message.class);
+                        assert friendlyMessage != null;
                         if (
                                 userList.get(0).equals(friendlyMessage.getFromUser()) &&
                                         userList.get(1).equals(friendlyMessage.getToUser())
@@ -180,6 +180,7 @@ public class ChatActivity extends AppCompatActivity implements Info {
                         ) {
                             Log.i(TAG, "onDataChange: condition true");
                             conversationId = friendlyMessage.getConversationId();
+                            attachDatabaseReadListener();
                             return;
                         }
                     }
@@ -211,11 +212,12 @@ public class ChatActivity extends AppCompatActivity implements Info {
 
         String conId2 = UUID.randomUUID().toString();
         String messageId2 = String.valueOf(System.currentTimeMillis());
-        Message friendlyMessage2 = new Message(messageId2, "hellowwww", fromUserId + "",
-                "asdasd", "", toUserId + "", "", conId2);
+        Message friendlyMessage2 = new Message(messageId2, "", fromUserId + "",
+                "", "", toUserId + "", "", conId2);
         DatabaseReference myRef2 = database.getReference(CONVERSATIONS).child(conId2)
                 .child(messageId2);
         myRef2.setValue(friendlyMessage2);
+        attachDatabaseReadListener();
 
     }
 
@@ -228,17 +230,18 @@ public class ChatActivity extends AppCompatActivity implements Info {
                 User value = dataSnapshot.getValue(User.class);
                 if (i == 1) {
                     toUser = value;
+                    assert toUser != null;
                     String userName = toUser.getFirstName() + " " + toUser.getLastName();
                     tvTitle.setText(userName);
-                    String fromUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    String fromUserId = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                     setUser(2, fromUserId);
                 } else {
                     fromUser = value;
-
+                    checkConversations();
                     return;
                 }
                 Log.d(TAG, "Value is: " + value);
-                attachDatabaseReadListener();
+
             }
 
             @Override
@@ -345,6 +348,7 @@ public class ChatActivity extends AppCompatActivity implements Info {
 
 
                 if (friendlyMessages.size() <= 0) {
+                    Log.i(TAG, "onDataChange: Not created history");
                     mMessageListView.setAdapter(mMessageAdapter);
                     return;
                 }

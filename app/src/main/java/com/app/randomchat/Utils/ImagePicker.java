@@ -13,16 +13,14 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
 
+import com.app.randomchat.Info.Info;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 
-public class ImagePicker {
+public class ImagePicker implements Info {
 
-    private static final int DEFAULT_MIN_WIDTH_QUALITY = 400;
-    private static final String TAG = "ImagePicker";
-    private static final String TEMP_IMAGE_NAME = "tempImage";
 
-    public static int minWidthQuality = DEFAULT_MIN_WIDTH_QUALITY;
 
     public static Bitmap getImageFromResult(Context context, int resultCode,
                                             Intent imageReturnedIntent) {
