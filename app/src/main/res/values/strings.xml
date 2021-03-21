@@ -33,4 +33,6 @@
     <string name="enter_message">Enter Message</string>
     <string name="username">Username</string>
     <string name="nickname">Nickname</string>
+    <string name="age">Age</string>
+    <string name="_18">18</string>
 </resources>
