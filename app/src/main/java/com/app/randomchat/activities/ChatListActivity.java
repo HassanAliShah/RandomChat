@@ -356,6 +356,10 @@ public class ChatListActivity extends AppCompatActivity implements Info {
 
                 historyList.addAll(userConHistories);
 
+                if (historyList.isEmpty()) {
+                    Toast.makeText(ChatListActivity.this, "click search to start a chat", Toast.LENGTH_SHORT).show();
+                }
+
                 TypeRecyclerViewAdapter typeRecyclerViewAdapter = new
                         TypeRecyclerViewAdapter(ChatListActivity.this, historyList, TYPE_MESSAGE);
                 typeRecyclerViewAdapter.notifyDataSetChanged();

@@ -36,7 +36,7 @@
             android:layout_height="0dp"
             android:layout_marginStart="5dp"
             android:background="@android:color/transparent"
-            android:padding="10dp"
+            android:padding="15dp"
             android:scaleType="fitXY"
             android:src="@drawable/ic_menu_24px"
             android:tint="@color/white"
@@ -86,7 +86,6 @@
         android:layout_gravity="start"
         android:background="@color/main_color_theme"
         android:fitsSystemWindows="true"
-        android:forceDarkAllowed="false"
         app:headerLayout="@layout/nav_header_main" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
