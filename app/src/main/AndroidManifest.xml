@@ -36,6 +36,11 @@
         <activity android:name=".activities.ChatListActivity" />
         <activity android:name=".activities.SignUpActivity" />
         <activity android:name=".activities.LoginActivity" />
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/app_id"/>
+
         <activity
             android:name=".activities.ChatActivity"
             android:windowSoftInputMode="adjustResize" />

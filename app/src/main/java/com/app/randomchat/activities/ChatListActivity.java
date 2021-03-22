@@ -40,6 +40,10 @@ import com.app.randomchat.R;
 import com.app.randomchat.Utils.ImagePicker;
 import com.app.randomchat.adapters.TypeRecyclerViewAdapter;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
@@ -61,6 +65,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ChatListActivity extends AppCompatActivity implements Info {
 
@@ -97,6 +103,7 @@ public class ChatListActivity extends AppCompatActivity implements Info {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_list);
 
+        initAds();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference();
 
@@ -110,6 +117,35 @@ public class ChatListActivity extends AppCompatActivity implements Info {
         initChatList();
 
         initCurrentUser();
+
+    }
+
+    private void initAds() {
+
+        MobileAds.initialize(this, initializationStatus -> {
+        });
+
+        AdView mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+        InterstitialAd interstitialAd = new InterstitialAd(this);
+        interstitialAd.setAdUnitId(getResources().getString(R.string.interstitial_ad_id));
+
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(() -> {
+                    interstitialAd.loadAd(new AdRequest.Builder().build());
+                    if (interstitialAd.isLoaded()) {
+                        interstitialAd.show();
+                    } else {
+                        Log.d("TAG", "The interstitial wasn't loaded yet.");
+                    }
+                });
+            }
+        }, 0, 5 * 60 * 1000);
 
     }
 
@@ -235,9 +271,7 @@ public class ChatListActivity extends AppCompatActivity implements Info {
     }
 
     private void uploadImage(Bitmap bitmap) {
-
         Log.i(TAG, "uploadImage: ");
-
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] data = stream.toByteArray();
@@ -260,7 +294,6 @@ public class ChatListActivity extends AppCompatActivity implements Info {
                 Log.i(TAG, "uploadImage: " + urlToImage);
                 currentUser.setUserImageUrl(urlToImage);
                 FirebaseDatabase.getInstance().getReference(USERS).child(currentUser.getId()).setValue(currentUser);
-
             });
             Toast.makeText(getApplicationContext(), "Uploaded", Toast.LENGTH_SHORT).show();
         }).addOnFailureListener(e -> {
@@ -457,8 +490,8 @@ public class ChatListActivity extends AppCompatActivity implements Info {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        myRef.child(ONLINE_USERS).child(currentUserId).removeValue();
-        FirebaseAuth.getInstance().signOut();
+//        myRef.child(ONLINE_USERS).child(currentUserId).removeValue();
+//        FirebaseAuth.getInstance().signOut();
     }
 
     private void initChatList() {

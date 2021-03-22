@@ -43,5 +43,9 @@
     <string name="___">-</string>
     <string name="age_range">Age Range</string>
 
+    <string name="app_id">ca-app-pub-3494291433648583~3403703940</string>
+    <string name="ad_id">ca-app-pub-3494291433648583/9842772177</string>
+    <string name="interstitial_ad_id">ca-app-pub-3494291433648583/4844229380</string>
+
 
 </resources>
