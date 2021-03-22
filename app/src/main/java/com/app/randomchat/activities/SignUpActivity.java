@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -159,7 +158,7 @@ public class SignUpActivity extends AppCompatActivity implements Info {
     private void writeDataToFirebase(String urlToImage) {
         Log.i(TAG, "writeDataToFirebase: ");
         String id = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-        User user = new User(id, strEtFirstName, strEtLastName, strEtEmail, strEtPassword, urlToImage, strRbGender, BOTH);
+        User user = new User(id, strEtFirstName, strEtLastName, strEtEmail, strEtPassword, urlToImage, strRbGender, BOTH, "18", "50", "18");
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference(USERS).child(id);
         myRef.setValue(user).addOnCompleteListener(task -> {

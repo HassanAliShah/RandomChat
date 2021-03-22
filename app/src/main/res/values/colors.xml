@@ -9,7 +9,9 @@
     <color name="cyan">#E4FF69</color>
     <color name="white">#FFFFFFFF</color>
     <color name="greenishBlue">#36F492</color>
-    <color name="main_color_theme">#ff0099cc</color>
+    <color name="main_color_theme">#0099cc</color>
     <color name="quantum_grey400">#4D4D4D</color>
     <color name="quantum_grey700">#797979</color>
+    <color name="orange">#ffff8800</color>
+    <color name="grey_transparent">#CB242424</color>
 </resources>

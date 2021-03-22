@@ -3,14 +3,14 @@ package com.app.randomchat.Pojo;
 public class OnlineUser {
 
     String userId;
-    String gender;
+    String age;
 
     public OnlineUser() {
     }
 
-    public OnlineUser(String userId, String gender) {
+    public OnlineUser(String userId, String age) {
         this.userId = userId;
-        this.gender = gender;
+        this.age = age;
     }
 
     public String getUserId() {
@@ -21,11 +21,11 @@ public class OnlineUser {
         this.userId = userId;
     }
 
-    public String getGender() {
-        return gender;
+    public String getAge() {
+        return age;
     }
 
-    public void setGender(String gender) {
-        this.gender = gender;
+    public void setGender(String age) {
+        this.age = age;
     }
 }

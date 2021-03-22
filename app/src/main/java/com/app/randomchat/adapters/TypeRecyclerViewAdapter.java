@@ -6,7 +6,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,8 +17,8 @@ import com.app.randomchat.Pojo.User;
 import com.app.randomchat.Pojo.UserConHistory;
 import com.app.randomchat.R;
 import com.app.randomchat.activities.ChatActivity;
+import com.app.randomchat.activities.PreviewImageActivity;
 import com.bumptech.glide.Glide;
-import com.facebook.drawee.view.SimpleDraweeView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -78,6 +77,11 @@ public class TypeRecyclerViewAdapter extends RecyclerView.Adapter<TypeRecyclerVi
             holder.tvUserName.setTextColor(context.getColor(R.color.black));
             holder.tvUserName.setText(message.getUserName());
             holder.ivUserProfile.setImageURI(message.getUserImageUrl());
+
+            holder.ivUserProfile.setOnClickListener(v -> {
+                getImageUriAge(message.getTargetUserId());
+            });
+
             holder.ibTouchField.setOnClickListener(v -> {
                 Intent intent = new Intent(context, ChatActivity.class);
                 intent.putExtra(KEY_TARGET_USER_ID, message.getTargetUserId());
@@ -118,13 +122,15 @@ public class TypeRecyclerViewAdapter extends RecyclerView.Adapter<TypeRecyclerVi
         }
     }
 
-    private void setImageAndUser(TextView tvUserName, SimpleDraweeView ivUserProfile, String targetUserId) {
-        FirebaseDatabase.getInstance().getReference().child(USERS).child(targetUserId).addValueEventListener(new ValueEventListener() {
+    private void getImageUriAge(String userId) {
+        FirebaseDatabase.getInstance().getReference(USERS).child(userId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                tvUserName.setText(user.getFirstName());
-                ivUserProfile.setImageURI(user.getUserImageUrl());
+                Intent intent = new Intent(context, PreviewImageActivity.class);
+                intent.putExtra(KEY_IMAGE, user.getUserImageUrl());
+                intent.putExtra(KEY_AGE, user.getAge());
+                context.startActivity(intent);
             }
 
             @Override
@@ -133,6 +139,7 @@ public class TypeRecyclerViewAdapter extends RecyclerView.Adapter<TypeRecyclerVi
                 Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
+
     }
 
     @Override

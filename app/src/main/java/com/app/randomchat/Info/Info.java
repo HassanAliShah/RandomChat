@@ -19,6 +19,8 @@ public interface Info {
     int RC_SIGN_IN = 1000;
     int minWidthQuality = DEFAULT_MIN_WIDTH_QUALITY;
 
+    String KEY_IMAGE = "KEY_IMAGE";
+    String KEY_AGE = "KEY_AGE";
 
     String USER_CON_HISTORY = "UserConHistory";
 

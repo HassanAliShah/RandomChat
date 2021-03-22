@@ -7,6 +7,18 @@
     android:background="@android:color/holo_blue_dark"
     tools:context=".activities.LoginActivity">
 
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_animation"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        app:layout_constraintBottom_toTopOf="@id/et_email"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_rawRes="@raw/chat_anim" />
+
     <ProgressBar
         android:id="@+id/pb_log_in"
         android:layout_width="wrap_content"
@@ -15,23 +27,23 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/btn_login"
         app:layout_constraintStart_toStartOf="@id/btn_login"
-        app:layout_constraintTop_toBottomOf="@+id/btn_login" />
+        app:layout_constraintTop_toBottomOf="@+id/ll_google_login" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:background="@android:color/white"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/dw_login_button_back"
+        android:backgroundTint="@android:color/white"
         android:hint="@string/email"
         android:padding="15dp"
         android:textColor="@android:color/black"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/et_password"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.45" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/et_password"
@@ -39,14 +51,16 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="10dp"
-        android:background="@android:color/white"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/dw_login_button_back"
+        android:backgroundTint="@android:color/white"
         android:hint="@string/password"
         android:padding="15dp"
         android:textColor="@android:color/black"
         android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/btn_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_email"
         app:layout_constraintVertical_bias="0.45" />
 
     <androidx.appcompat.widget.AppCompatButton
@@ -54,14 +68,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:background="@android:color/holo_orange_dark"
+        android:background="@drawable/dw_login_button_back"
+        android:backgroundTint="@android:color/holo_orange_dark"
         android:onClick="login"
         android:text="@string/login"
         android:textAllCaps="false"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/et_email"
         app:layout_constraintStart_toStartOf="@id/et_email"
-        app:layout_constraintTop_toBottomOf="@id/et_password" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -75,5 +91,73 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+
+    <LinearLayout
+        android:id="@+id/ll_facebook_login"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/dw_login_button_back"
+        android:backgroundTint="#3b5998"
+        android:gravity="center_vertical"
+        android:padding="0dp"
+        app:layout_constraintEnd_toEndOf="@id/et_email"
+        app:layout_constraintStart_toStartOf="@id/et_email"
+        app:layout_constraintTop_toBottomOf="@id/btn_login">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:background="@drawable/dw_login_button_back"
+            android:backgroundTint="#3b5998"
+            android:padding="0dp">
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/login_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="@android:color/transparent"
+                android:backgroundTint="#3b5998" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/ll_google_login"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/dw_login_button_back"
+        android:backgroundTint="@android:color/white"
+        android:onClick="continueWithGoogle"
+        android:padding="0dp"
+        app:layout_constraintEnd_toEndOf="@id/et_email"
+        app:layout_constraintStart_toStartOf="@id/et_email"
+        app:layout_constraintTop_toBottomOf="@id/ll_facebook_login">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/ic_google" />
+
+        <TextView
+            android:id="@+id/tv_google_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="10dp"
+            android:text="@string/continue_with_email"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:textStyle="bold|normal" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

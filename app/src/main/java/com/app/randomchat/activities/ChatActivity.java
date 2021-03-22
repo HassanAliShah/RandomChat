@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -31,6 +32,7 @@ import com.app.randomchat.Pojo.User;
 import com.app.randomchat.Pojo.UserConHistory;
 import com.app.randomchat.R;
 import com.app.randomchat.adapters.TypeRecyclerViewAdapter;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -57,7 +59,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
-public class ChatActivity extends AppCompatActivity implements Info {
+public class ChatActivity extends AppCompatActivity implements Info, View.OnClickListener {
 
     User toUser;
     User fromUser;
@@ -67,6 +69,11 @@ public class ChatActivity extends AppCompatActivity implements Info {
     String conversationId = "";
     List<String> userList;
     TextView tvTitle;
+
+    SimpleDraweeView ivUserProfile;
+
+    ImageButton ibBack;
+
     private RecyclerView mMessageListView;
     private TypeRecyclerViewAdapter mMessageAdapter;
     private EditText mMessageEditText;
@@ -86,6 +93,9 @@ public class ChatActivity extends AppCompatActivity implements Info {
         checkIntent();
 
         tvTitle = findViewById(R.id.title);
+        ibBack = findViewById(R.id.ib_back);
+        ibBack.setOnClickListener(v -> onBackPressed());
+        ivUserProfile = findViewById(R.id.iv_user_profile);
         FirebaseDatabase mFireDb = FirebaseDatabase.getInstance();
         FirebaseStorage mFireStorage = FirebaseStorage.getInstance();
         mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
@@ -230,6 +240,8 @@ public class ChatActivity extends AppCompatActivity implements Info {
                 User value = dataSnapshot.getValue(User.class);
                 if (i == 1) {
                     toUser = value;
+                    ivUserProfile.setImageURI(toUser.getUserImageUrl());
+                    ivUserProfile.setOnClickListener(ChatActivity.this);
                     assert toUser != null;
                     String userName = toUser.getFirstName() + " " + toUser.getLastName();
                     tvTitle.setText(userName);
@@ -493,5 +505,12 @@ public class ChatActivity extends AppCompatActivity implements Info {
         Uri uri = Uri.fromParts("package", getPackageName(), null);
         intent.setData(uri);
         startActivityForResult(intent, 101);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(ChatActivity.this, PreviewImageActivity.class);
+        intent.putExtra(KEY_IMAGE, toUser.getUserImageUrl());
+        startActivity(intent);
     }
 }

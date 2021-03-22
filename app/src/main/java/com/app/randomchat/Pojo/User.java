@@ -10,21 +10,53 @@ public class User extends Super {
     String userImageUrl;
     String gender;
     String priority;
+    String age;
+
+    String ageUpper;
+    String ageLower;
 
     public User() {
 
     }
 
-    public User(String id, String firstName, String lastName, String email, String password,
-                String userImageUrl, String gender, String priority) {
+    public User(String id, String firstName, String lastName, String email,
+                String password, String userImageUrl, String gender, String priority,
+                String age, String ageUpper, String ageLower) {
         this.id = id;
-        this.priority = priority;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.gender = gender;
-        this.userImageUrl = userImageUrl;
         this.password = password;
+        this.userImageUrl = userImageUrl;
+        this.gender = gender;
+        this.priority = priority;
+        this.age = age;
+        this.ageUpper = ageUpper;
+        this.ageLower = ageLower;
+    }
+
+    public String getAgeUpper() {
+        return ageUpper;
+    }
+
+    public void setAgeUpper(String ageUpper) {
+        this.ageUpper = ageUpper;
+    }
+
+    public String getAgeLower() {
+        return ageLower;
+    }
+
+    public void setAgeLower(String ageLower) {
+        this.ageLower = ageLower;
+    }
+
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
     }
 
     public String getPriority() {

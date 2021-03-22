@@ -41,6 +41,13 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.0'
     testImplementation 'junit:junit:4.13.2'
+
+    implementation 'com.facebook.android:facebook-login:9.0.0'
+    implementation 'com.facebook.android:facebook-android-sdk:9.0.0'
+    implementation 'com.google.android.gms:play-services-basement:17.6.0'
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
+
+    implementation 'com.airbnb.android:lottie:3.6.1'
     implementation 'com.karumi:dexter:5.0.0'
     implementation 'com.firebaseui:firebase-ui-auth:4.3.0'
     implementation 'com.google.firebase:firebase-config:20.0.4'

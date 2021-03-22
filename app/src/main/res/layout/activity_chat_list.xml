@@ -48,10 +48,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:text="@string/my_chats"
+            android:text="@string/random_chat"
             android:textColor="@color/white"
             android:textSize="25sp"
-            android:textStyle="bold|italic"
             app:layout_constraintBottom_toBottomOf="@id/background"
             app:layout_constraintStart_toEndOf="@id/ib_chats"
             app:layout_constraintTop_toTopOf="parent" />

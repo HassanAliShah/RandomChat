@@ -9,6 +9,8 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -80,6 +82,11 @@ public class ChatListActivity extends AppCompatActivity implements Info {
     List<String> genderList;
     Intent intent;
     TextInputEditText etUserName;
+    TextInputEditText etAge;
+    TextInputEditText etAgeLower;
+    TextInputEditText etAgeUpper;
+
+
     ProgressBar pbLoading;
     View hView;
     ProgressDialog dialog;
@@ -115,6 +122,9 @@ public class ChatListActivity extends AppCompatActivity implements Info {
 
         hView = navigationView.getHeaderView(0);
         etUserName = hView.findViewById(R.id.et_username);
+        etAge = hView.findViewById(R.id.et_age);
+        etAgeLower = hView.findViewById(R.id.et_age_low);
+        etAgeUpper = hView.findViewById(R.id.et_age_up);
         ImageButton tvBack = hView.findViewById(R.id.tv_back);
         tvBack.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.START));
 
@@ -247,8 +257,9 @@ public class ChatListActivity extends AppCompatActivity implements Info {
             Task<Uri> result = Objects.requireNonNull(Objects.requireNonNull(taskSnapshot.getMetadata()).getReference()).getDownloadUrl();
             result.addOnSuccessListener(uri -> {
                 String urlToImage = uri.toString();
+                Log.i(TAG, "uploadImage: " + urlToImage);
                 currentUser.setUserImageUrl(urlToImage);
-                FirebaseDatabase.getInstance().getReference(USERS).child(currentUserId).setValue(currentUser);
+                FirebaseDatabase.getInstance().getReference(USERS).child(currentUser.getId()).setValue(currentUser);
 
             });
             Toast.makeText(getApplicationContext(), "Uploaded", Toast.LENGTH_SHORT).show();
@@ -290,6 +301,30 @@ public class ChatListActivity extends AppCompatActivity implements Info {
         spGender.setSelection(genderList.indexOf(currentUser.getGender()));
         String username = currentUser.getFirstName() + " " + currentUser.getLastName();
         etUserName.setText(username);
+        etAge.setText(currentUser.getAge());
+
+        etAgeLower.setText(currentUser.getAgeLower());
+        etAgeUpper.setText(currentUser.getAgeUpper());
+
+        etAgeLower.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (etAgeLower.getText().toString().length() == 2) {
+                    etAgeLower.clearFocus();
+                    etAgeUpper.requestFocus();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         etUserName.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -299,6 +334,94 @@ public class ChatListActivity extends AppCompatActivity implements Info {
                         .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
                         .setValue(currentUser);
                 etUserName.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(hView.getWindowToken(), 0);
+                return true;
+            }
+            return false;
+        });
+
+        etAgeUpper.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                String strEtAgeUpper = etAgeUpper.getText().toString();
+                String strEtAgeLower = etAgeLower.getText().toString();
+                try {
+                    int ageLower = Integer.parseInt(strEtAgeLower);
+                    if (ageLower < 18) {
+                        etAgeUpper.setError("Invalid");
+                        return true;
+                    }
+                    int ageUpper = Integer.parseInt(strEtAgeLower);
+                    if (ageLower > ageUpper) {
+                        Toast.makeText(this, "Upper age must be greater than lower",
+                                Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                } catch (Exception e) {
+                    etAge.setError("Invalid argument");
+                    return true;
+                }
+
+                currentUser.setAgeUpper(strEtAgeUpper);
+                currentUser.setAgeLower(strEtAgeLower);
+                FirebaseDatabase.getInstance().getReference(USERS)
+                        .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                        .setValue(currentUser);
+                etAgeUpper.clearFocus();
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(hView.getWindowToken(), 0);
+                return true;
+            }
+            return false;
+        });
+
+        etAgeLower.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                etAgeLower.clearFocus();
+                etAgeUpper.requestFocus();
+//                String strEtAge = etAgeLower.getText().toString();
+//                try {
+//                    int age = Integer.parseInt(strEtAge);
+//                    if (age < 18) {
+//                        Toast.makeText(this, "Cannot be lower than 18", Toast.LENGTH_SHORT).show();
+//                        etAgeLower.setError("Invalid argument");
+//                        return true;
+//                    }
+//                } catch (Exception e) {
+//                    etAge.setError("Invalid argument");
+//                    return true;
+//                }
+//                currentUser.setAgeLower(strEtAge);
+//                FirebaseDatabase.getInstance().getReference(USERS)
+//                        .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+//                        .setValue(currentUser);
+//                etAgeLower.clearFocus();
+//                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//                imm.hideSoftInputFromWindow(hView.getWindowToken(), 0);
+                return true;
+            }
+            return false;
+        });
+
+        etAge.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                String strEtAge = etAge.getText().toString();
+                try {
+                    int age = Integer.parseInt(strEtAge);
+                    if (age < 18) {
+                        Toast.makeText(this, "Cannot be lower than 18", Toast.LENGTH_SHORT).show();
+                        etAge.setError("Invalid argument");
+                        return true;
+                    }
+                } catch (Exception e) {
+                    etAge.setError("Invalid argument");
+                    return true;
+                }
+                currentUser.setAge(strEtAge);
+                FirebaseDatabase.getInstance().getReference(USERS)
+                        .child(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid())
+                        .setValue(currentUser);
+                etAge.clearFocus();
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(hView.getWindowToken(), 0);
                 return true;
@@ -327,7 +450,7 @@ public class ChatListActivity extends AppCompatActivity implements Info {
 
     private void initOnlineStatus() {
         Log.i(TAG, "initOnlineStatus: ");
-        OnlineUser onlineUser = new OnlineUser(currentUserId, "");
+        OnlineUser onlineUser = new OnlineUser(currentUserId, currentUser.getAge());
         myRef.child(ONLINE_USERS).child(currentUser.getGender()).child(currentUserId).setValue(onlineUser);
     }
 
@@ -408,6 +531,20 @@ public class ChatListActivity extends AppCompatActivity implements Info {
                     assert onlineUser != null;
                     if (userStrings.contains(onlineUser.getUserId()))
                         continue;
+
+                    try {
+                        int targetUserAge = Integer.parseInt(onlineUser.getAge());
+                        int userUpperAge = Integer.parseInt(currentUser.getAgeUpper());
+                        int userLowerAge = Integer.parseInt(currentUser.getAgeLower());
+
+                        if (targetUserAge < userLowerAge || targetUserAge > userUpperAge) {
+                            continue;
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     userList.add(childSnapshot.getValue(OnlineUser.class));
                 }
 
@@ -417,7 +554,6 @@ public class ChatListActivity extends AppCompatActivity implements Info {
                     initFemaleUsers(userList);
                 else
                     initRandomSelection(userList);
-
 
             }
 
@@ -491,7 +627,6 @@ public class ChatListActivity extends AppCompatActivity implements Info {
                 }
 
                 Log.i(TAG, "onDataChange: Female Users : " + userList);
-
 
                 userList.addAll(femaleUserList);
                 initRandomSelection(userList);

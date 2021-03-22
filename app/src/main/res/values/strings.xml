@@ -35,4 +35,13 @@
     <string name="nickname">Nickname</string>
     <string name="age">Age</string>
     <string name="_18">18</string>
+    <string name="continue_with_email">Continue with Email</string>
+
+    <string name="facebook_app_id">149583547038991</string>
+    <string name="fb_login_protocol_scheme">fb149583547038991</string>
+    <string name="random_chat">Random Chat</string>
+    <string name="___">-</string>
+    <string name="age_range">Age Range</string>
+
+
 </resources>

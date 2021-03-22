@@ -144,6 +144,68 @@
         app:layout_constraintTop_toTopOf="@id/tv_gender" />
 
     <TextView
+        android:id="@+id/tv_age_range"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:text="@string/age_range"
+        android:textAlignment="textStart"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/nick_name"
+        app:layout_constraintTop_toBottomOf="@id/tv_priority" />
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/et_age_low"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:imeOptions="actionNext"
+        android:inputType="number"
+        android:paddingVertical="10dp"
+        android:selectAllOnFocus="true"
+        android:text="@string/_18"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_age_range"
+        app:layout_constraintEnd_toStartOf="@id/separator"
+        app:layout_constraintTop_toTopOf="@id/tv_age_range"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/separator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/___"
+        android:textSize="23sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/tv_age_range"
+        app:layout_constraintEnd_toStartOf="@id/et_age_up"
+        app:layout_constraintTop_toTopOf="@id/tv_age_range" />
+
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/et_age_up"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:gravity="center"
+        android:imeOptions="actionDone"
+        android:inputType="number"
+        android:paddingVertical="10dp"
+        android:selectAllOnFocus="true"
+        android:text="@string/_18"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@id/tv_age_range"
+        app:layout_constraintEnd_toEndOf="@id/et_username"
+        app:layout_constraintTop_toTopOf="@id/tv_age_range"
+        tools:ignore="RtlSymmetry" />
+
+
+    <TextView
         android:id="@+id/tv_age"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -162,7 +224,7 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:imeOptions="actionDone"
-        android:inputType="text"
+        android:inputType="number"
         android:paddingVertical="10dp"
         android:paddingEnd="20sp"
         android:selectAllOnFocus="true"

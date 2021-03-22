@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "140916446439",
+    "firebase_url": "https://random-chat-7a362-default-rtdb.firebaseio.com",
     "project_id": "random-chat-7a362",
     "storage_bucket": "random-chat-7a362.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "140916446439-ausai357qjo8072d7fiutmo7otkn3cai.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.randomchat",
+            "certificate_hash": "41477d90dffb4884418e997e6c48f320770088a4"
+          }
+        },
         {
           "client_id": "140916446439-072bviskfrumokqlg618o25t34oe66g5.apps.googleusercontent.com",
           "client_type": 3

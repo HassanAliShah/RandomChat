@@ -7,6 +7,41 @@
     android:background="@drawable/crop"
     tools:context=".activities.ChatActivity">
 
+    <View
+        android:id="@+id/background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/main_color_theme"
+        app:layout_constraintDimensionRatio="7:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/ib_back"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:padding="12dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_arrow_back_24px"
+        app:layout_constraintBottom_toBottomOf="@id/background"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/iv_user_profile"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="5dp"
+        app:layout_constraintBottom_toBottomOf="@id/background"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintStart_toEndOf="@id/ib_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:roundedCornerRadius="50dp" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messageListView"
         android:layout_width="0dp"
@@ -26,27 +61,17 @@
         app:stackFromEnd="true"
         tools:listitem="@layout/item_message" />
 
-    <View
-        android:id="@+id/background"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/main_color_theme"
-        app:layout_constraintDimensionRatio="7:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="10dp"
         android:text="@string/my_chats"
         android:textColor="@color/white"
         android:textSize="25sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/background"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_user_profile"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
